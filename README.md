@@ -38,7 +38,7 @@ alpha-trend-predictor/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/alpha-trend-predictor.git
+git clone https://github.com/ccloud24/alpha-trend-predictor.git
 cd alpha-trend-predictor
 ```
 
