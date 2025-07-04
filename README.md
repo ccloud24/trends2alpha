@@ -111,7 +111,7 @@ Install with:
 pip install -r requirements.txt
 ```
 
-Example dependencies:
+dependencies:
 
 - `yfinance`
 - `pandas`
