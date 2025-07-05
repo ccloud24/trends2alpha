@@ -1,35 +1,85 @@
 # trends2alpha
-this project trains a random forest ML model to read and analyze past trends for various keywords, and utilizes that data to make purchasing decisions for stock tickers
 
-## What It Does
-
-- Collects Google Trends data for selected industry-related keywords  
-- Maps keywords to relevant stock tickers (e.g. Apple → AAPL)  
-- Combines keyword interest with daily stock price data  
-- Trains a Random Forest classifier to predict next-day returns  
-- Compares a Buy & Hold strategy with a keyword-driven strategy  
-- Saves the results as strategy performance charts in the `plots/` folder  
+This project trains a Random Forest ML model that combines **Google Trends data** with **technical indicators** to predict **monthly stock movements**, achieving significant outperformance during backtesting.
 
 ---
 
-## Concept
+##  What It Does
 
-The idea is that search behavior may precede market moves.  
-For example, increased search volume for “cancelled flights” may predict negative returns for airline stocks.  
-This script attempts to capture that predictive power by combining trend data with stock return labels.
+-  Collects Google Trends data for stock-specific keywords (e.g., `"AAPL stock"`, `"Apple earnings"`)
+-  Downloads 5 years of historical stock data and calculates technical indicators (RSI, SMA, volatility)
+-  Identifies optimal time lags between search trends and price movements
+-  Trains a Random Forest classifier to predict **monthly (not daily)** returns
+-  Backtests a trend-informed strategy against buy-and-hold
+-  Generates comprehensive performance visualizations and metrics
 
 ---
 
-## Project Structure
+##  Concept
 
-```
+The hypothesis: **search behavior on Google can provide early signals for stock movements**.
+
+> For example, spikes in `"NVDA stock"` searches might precede price increases by 1–2 weeks.
+
+This project combines these **alternative data signals** with traditional **technical analysis** for enhanced predictions.
+
+---
+
+## 📊 Results
+
+The model achieved strong performance during backtesting (2020–2024):
+
+| Stock | AUC Score | Strategy Return | Market Return | Sharpe Ratio | Win Rate |
+|-------|-----------|------------------|----------------|---------------|----------|
+| AAPL  | 0.867     | 499.82%          | 240.48%        | 2.73          | 87.9%    |
+| NVDA  | 0.956     | 10,461.16%       | 6,960.50%      | 2.65          | 82.9%    |
+| AMZN  | 0.870     | 659.50%          | 484.77%        | 3.02          | 86.8%    |
+| MSFT  | 0.867     | 187.49%          | 100.21%        | 2.36          | 84.6%    |
+| GOOGL | 0.924     | 495.95%          | 279.85%        | 2.56          | 88.2%    |
+
+>  **Important Disclaimers**:
+> - Results reflect an exceptional bull market period (2020–2024)
+> - Backtesting assumes perfect execution with **no transaction costs**
+> - Past performance does not indicate future results
+> - **Real-world returns would be significantly lower**
+
+---
+
+##  Key Features
+
+### 📉 Technical Indicators
+- **RSI**: Relative Strength Index for overbought/oversold conditions  
+- **SMA**: 20 and 50-day moving averages  
+- **Volatility**: 20-day rolling standard deviation  
+- **Price Ratios**: e.g. Price relative to SMA
+
+###  Google Trends Features
+- **Trend Momentum**: Rate of change in search volume
+- **Spike Detection**: Identifies unusual search activity (z-score > 2)
+- **Lag Optimization**: Automatically finds optimal time delay (typically 1–2 weeks)
+
+###  Machine Learning
+- **Model**: Random Forest with 200 estimators
+- **Validation**: 80/20 time-series split (no leakage)
+- **Features**: ~20 combined trend + technical features per stock
+
+---
+
+##  Project Structure
+
 alpha-trend-predictor/
-├── trends_alpha.py         # Main script
-├── requirements.txt        # Python dependencies
-├── README.md               # This file
-├── trend_cache/            # Cached keyword trend CSVs
-└── plots/                  # Output PNG charts per ticker
-```
+├── trends_alpha.py 
+├── requirements.txt 
+├── README.md 
+├── .gitignore
+├── trend_cache/ 
+│ ├── AAPL_stock.csv
+│ ├── Apple_earnings.csv
+│ └── ...
+└── plots/ 
+├── AAPL_strategy_analysis.png
+├── summary_metrics.png
+└── model_performance_summary.csv
 
 ---
 
@@ -37,101 +87,89 @@ alpha-trend-predictor/
 
 ### 1. Clone the repository
 
-```bash
-git clone https://github.com/ccloud24/alpha-trend-predictor.git
-cd alpha-trend-predictor
-```
+  git clone https://github.com/ccloud24/alpha-trend-predictor.git
+  cd alpha-trend-predictor
 
-### 2. Create and activate a virtual environment
-
-```bash
-python -m venv venv
-source venv/bin/activate       # On Windows: venv\Scripts\activate
-```
-
-### 3. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-## Usage
-
-Run the script:
-
-```bash
-python trends_alpha.py
-```
-
+2. Create and activate a virtual environment
+  python -m venv venv
+  source venv/bin/activate       # On Windows: venv\Scripts\activate
+3. Install dependencies
+  pip install -r requirements.txt
+Usage
+  Run the main analysis:
+    python trends_alpha.py
 This will:
-- Fetch and cache Google Trends data for each keyword
-- Download historical stock prices
-- Train a machine learning model per ticker
-- Save strategy vs. market return plots/charts in the `plots/` folder
 
----
+Fetch Google Trends data (or use cached results)
 
-## Output
+Download historical stock data via Yahoo Finance
 
-Each output graph shows:
+Engineer technical + trend features
 
--  **Buy & Hold** – Cumulative return if you simply held the stock
--  **Model Strategy** – Return based on keyword-driven predictions
+Train Random Forest models for each stock
 
-Saved as `.png` images inside the `plots/` directory.
+Generate strategy performance plots and statistics
 
----
+⏱ Expected runtime: 5–10 minutes (depending on cache status)
 
-## Notes on Limits
+ Output
+All results saved in the plots/ folder:
 
-- Google Trends has **strict rate limits (429 errors)**  
-- Cached results are reused from `trend_cache/` to avoid hitting the API  
-- Trend data is **weekly**, stock data is **daily**  
-  - The script uses backward `merge_asof` to align them appropriately  
-- If there is not enough aligned data for a stock, it is skipped
+ Individual stock analysis: Cumulative return plots
 
----
+ Summary dashboard: Comparative performance metrics
 
-## Future Ideas
+ CSV: model_performance_summary.csv with all model results
 
-- Add support for more ML models (XGBoost, Logistic Regression, etc.)
-- Introduce industry sentiment scoring based on keyword groups
-- Support real-time inference and alerting
-- Add dashboard for visualizing live signals
+ Key Metrics Explained
+Metric	Description
+AUC Score:	Model's ability to distinguish up vs down months (>0.7 is good)
+Sharpe Ratio:	Risk-adjusted return (>1 is good, >2 is excellent)
+Win Rate:	Percent of months where model predicted direction correctly
 
----
+ Methodology:
+Data Collection: Weekly Google Trends + Daily Yahoo Finance prices
 
-## Requirements
+Features:
 
-Install with:
+Technical indicators on price/volume
 
-```bash
-pip install -r requirements.txt
-```
+Google search trends: spikes, change rates, z-scores
 
-dependencies:
+Lag Optimization: Test -4 to +4 week lags to find best signal delay
 
-- `yfinance`
-- `pandas`
-- `numpy`
-- `matplotlib`
-- `scikit-learn`
-- `pytrends`
-- 'xgboost'
+Model Training: Random Forest Classifier with balanced weights
 
----
+Backtesting: Monthly strategy rebalancing vs buy-and-hold benchmark
 
-## License
 
-This project is licensed under the MIT License.  
-You are free to use, modify, and distribute with attribution.
+ Future Improvements
 
----
+Support for crypto and commodity markets
 
-## Acknowledgments
+Implement walk-forward validation
 
-- [PyTrends](https://github.com/GeneralMills/pytrends) – Google Trends API
-- [yFinance](https://github.com/ranaroussi/yfinance) – Historical stock data
-- [scikit-learn](https://scikit-learn.org) – ML model implementation
+Introduce position sizing / risk management
+
+Test on bear and sideways markets
+
+Requirements:
+yfinance>=0.2.18
+pytrends>=4.9.0
+scikit-learn>=1.3.0
+pandas>=2.0.0
+numpy>=1.24.0
+matplotlib>=3.7.0
+ta>=0.10.2
+📄 License
+This project is licensed under the MIT License.
+You're free to use, modify, and distribute with attribution.
+
+🙏 Acknowledgments
+pytrends – Unofficial Google Trends API
+
+yfinance – Yahoo Finance data
+
+scikit-learn – Machine Learning framework
+
+ta – Technical analysis indicators for Python
