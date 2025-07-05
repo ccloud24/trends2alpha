@@ -8,7 +8,7 @@ this project trains a random forest ML model to read and analyze past trends for
 - Combines keyword interest with daily stock price data  
 - Trains a Random Forest classifier to predict next-day returns  
 - Compares a Buy & Hold strategy with a keyword-driven strategy  
-- Saves the results as strategy performance plots in the `plots/` folder  
+- Saves the results as strategy performance charts in the `plots/` folder  
 
 ---
 
@@ -69,7 +69,7 @@ This will:
 - Fetch and cache Google Trends data for each keyword
 - Download historical stock prices
 - Train a machine learning model per ticker
-- Save strategy vs. market return plots in the `plots/` folder
+- Save strategy vs. market return plots/charts in the `plots/` folder
 
 ---
 
@@ -119,6 +119,7 @@ dependencies:
 - `matplotlib`
 - `scikit-learn`
 - `pytrends`
+- 'xgboost'
 
 ---
 
