@@ -65,24 +65,6 @@ The model achieved strong performance during backtesting (2020–2024):
 
 ---
 
-##  Project Structure
-
-alpha-trend-predictor/
-├── trends_alpha.py 
-├── requirements.txt 
-├── README.md 
-├── .gitignore
-├── trend_cache/ 
-│ ├── AAPL_stock.csv
-│ ├── Apple_earnings.csv
-│ └── ...
-└── plots/ 
-├── AAPL_strategy_analysis.png
-├── summary_metrics.png
-└── model_performance_summary.csv
-
----
-
 ## Installation
 
 ### 1. Clone the repository
