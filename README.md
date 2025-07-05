@@ -41,6 +41,7 @@ The model achieved strong performance during backtesting (2020–2024):
 > - Results reflect an exceptional bull market period (2020–2024)
 > - Backtesting assumes perfect execution with **no transaction costs**
 > - Past performance does not indicate future results
+> - model "cheats" by using optimal lag for data
 > - **Real-world returns would be significantly lower**
 
 ---
